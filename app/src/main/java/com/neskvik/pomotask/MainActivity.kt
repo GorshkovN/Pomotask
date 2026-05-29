@@ -4,44 +4,68 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
+import com.neskvik.pomotask.TaskDatabase
+import com.neskvik.pomotask.entities.Category
+import com.neskvik.pomotask.task.TaskScreen
+import com.neskvik.pomotask.task.TaskViewModel
 import com.neskvik.pomotask.ui.theme.PomotaskTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            PomotaskTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
+    private  val db by lazy{
+        Room.databaseBuilder(
+            applicationContext,
+            TaskDatabase::class.java,
+            "task.db"
+        ).build()
+    }
+
+
+
+
+    private val viewModel by viewModels<TaskViewModel>(
+        factoryProducer = {
+            object  : ViewModelProvider.Factory{
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return TaskViewModel(db.dao) as T
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
     )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PomotaskTheme {
-        Greeting("Android")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+//        val categories = listOf(
+//            Category(1, "Task", "#fc0303"),
+//            Category(2, "Work", "#5c84fa"),
+//            Category(3, "Study", "#aff536"),
+//        )
+//
+//        lifecycleScope.launch { categories.forEach { db.dao.insertCategory(it) } }
+
+        enableEdgeToEdge()
+        setContent {
+            PomotaskTheme {
+                val state by viewModel.state.collectAsState()
+                TaskScreen(state = state,onEvent = viewModel::onEvent)
+
+            }
+        }
     }
 }
