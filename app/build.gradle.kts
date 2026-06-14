@@ -41,7 +41,17 @@ android {
 }
 
 dependencies {
+    // Preferences DataStore (SharedPreferences like APIs)
+    implementation("androidx.datastore:datastore-preferences:1.2.1")
+
+    // Alternatively - without an Android dependency.
+    implementation("androidx.datastore:datastore-preferences-core:1.2.1")
+    implementation("androidx.datastore:datastore:1.2.1")
+
+    // Alternatively - without an Android dependency.
+    implementation("androidx.datastore:datastore-core:1.2.1")
     implementation(libs.androidx.material3)
+    implementation(libs.generativeai)
     val room_version = "2.8.4"
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")

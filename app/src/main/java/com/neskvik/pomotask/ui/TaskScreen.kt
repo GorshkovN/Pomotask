@@ -1,6 +1,5 @@
-package com.neskvik.pomotask.task
+package com.neskvik.pomotask.ui
 
-import android.icu.util.TimeZone
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -26,23 +24,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import com.neskvik.pomotask.task.SortType
+import com.neskvik.pomotask.task.TaskEvent
+import com.neskvik.pomotask.task.TaskState
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
 @Composable
 fun TaskScreen(
-    state: TaskState,
-    onEvent: (TaskEvent) -> Unit
+    taskState: TaskState,
+    onEvent: (TaskEvent) -> Unit,
+    modifier: Modifier
 ){
     Scaffold(
         floatingActionButton = {
@@ -53,10 +52,10 @@ fun TaskScreen(
                     contentDescription = "Add contact")
             }
         },
-        modifier = Modifier.padding(16.dp)
+        modifier = modifier.padding(16.dp)
     ) { paddingValues ->
-        if (state.isAddingTask){
-            AddTaskdialog(state = state, onEvent = onEvent)
+        if (taskState.isAddingTask){
+            AddTaskdialog(state = taskState, onEvent = onEvent)
         }
 
 
@@ -66,35 +65,35 @@ fun TaskScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item{
-                 Row(
-                     modifier = Modifier
-                         .fillMaxWidth()
-                         .horizontalScroll(rememberScrollState()),
-                     verticalAlignment = Alignment.CenterVertically
-                 ){
-                     SortType.entries.forEach {
-                         sortType ->
-                         Row(
-                             modifier = Modifier
-                                 .clickable{
-                                     onEvent(TaskEvent.SortTasks(sortType))
-                                 },
-                             verticalAlignment = Alignment.CenterVertically
-                         ) {
-                             RadioButton(
-                                 selected =  state.sortType == sortType,
-                                 onClick = {
-                                     onEvent(TaskEvent.SortTasks(sortType))
-                                 }
-                             )
-                             Text(
-                                 text = sortType.name
-                             )
-                         }
-                     }
-                 }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    SortType.entries.forEach {
+                            sortType ->
+                        Row(
+                            modifier = Modifier
+                                .clickable{
+                                    onEvent(TaskEvent.SortTasks(sortType))
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = taskState.sortType == sortType,
+                                onClick = {
+                                    onEvent(TaskEvent.SortTasks(sortType))
+                                }
+                            )
+                            Text(
+                                text = sortType.name
+                            )
+                        }
+                    }
+                }
             }
-            items(state.tasks){
+            items(taskState.tasks){
                 task ->
                 Row(
                     modifier = Modifier.fillMaxSize()
@@ -106,9 +105,11 @@ fun TaskScreen(
                             text = task.task.name,
                             fontSize = 20.sp
                         )
-                        Text(
-                            text = task.task.description ?: "нету"
-                        )
+                        if (task.task.description != ""){
+                            Text(
+                                text = task.task.description ?: "нету"
+                            )
+                        }
                         if (task.category != null){
                         Text(
                             modifier = Modifier.background(Color(task.category.color.toColorInt())),

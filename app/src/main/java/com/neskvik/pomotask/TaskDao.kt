@@ -3,6 +3,7 @@ package com.neskvik.pomotask
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -52,6 +53,8 @@ interface TaskDao {
     @Insert
     suspend fun insertCategory(category: Category)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllCategories(categories: List<Category>)
     @Delete
     suspend fun deleteCategory(category: Category)
     //endregion

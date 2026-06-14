@@ -63,12 +63,17 @@ class TaskViewModel(
                 val category = state.value.category
 
 
-                if(name.isBlank() || description.isBlank()){
+                if(name.isBlank()){
                     return
                 }
 
                 val formater = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                val deadlineMillis = formater.parse(deadline)?.time
+                val deadlineMillis = try{
+                    formater.parse(deadline)?.time
+                }catch(_: Exception) {
+                    null
+                }
+
                 val task = Task(
                     name = name,
                     description = description,
