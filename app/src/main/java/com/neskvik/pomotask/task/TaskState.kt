@@ -13,6 +13,8 @@ data class TaskState(
     val usePomodoro: Boolean = false,
     val isCompleted: Boolean = false,
     val sortType: SortType = SortType.Name,
+    val taskFilter: TaskFilter = TaskFilter.ALL,
+    val searchQuery: String = "",
     val isAddingTask: Boolean = false,
     val isSettingDate: Boolean = false
 )

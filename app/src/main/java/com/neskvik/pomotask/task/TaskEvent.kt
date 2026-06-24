@@ -20,8 +20,9 @@ sealed interface TaskEvent {
     object HideDatePicker: TaskEvent
 
     data class SortTasks(val sortType: SortType): TaskEvent
+    data class FilterTasks(val taskFilter: TaskFilter): TaskEvent
+    data class SetSearchQuery(val query: String): TaskEvent
     data class DeleteTask(val task: Task): TaskEvent
-
-
+    data class ToggleTaskCompleted(val task: Task): TaskEvent
 
 }

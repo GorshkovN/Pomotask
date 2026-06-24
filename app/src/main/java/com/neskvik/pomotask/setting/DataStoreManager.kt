@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.neskvik.pomotask.entities.Settings
 import kotlinx.coroutines.flow.map
@@ -46,11 +47,33 @@ class DataStoreManager(val context: Context) {
 //        }
 //    }
 
+
+    suspend fun saveAuthData(token: String, username: String, email: String) {
+        context.dataStore.edit { prefs ->
+            prefs[stringPreferencesKey("auth_token")] = token
+            prefs[stringPreferencesKey("auth_username")] = username
+            prefs[stringPreferencesKey("auth_email")] = email
+        }
+    }
+
+    suspend fun clearAuthData() {
+        context.dataStore.edit { prefs ->
+            prefs.remove(stringPreferencesKey("auth_token"))
+            prefs.remove(stringPreferencesKey("auth_username"))
+            prefs.remove(stringPreferencesKey("auth_email"))
+        }
+    }
+
+    fun getAuthToken() = context.dataStore.data.map { it[stringPreferencesKey("auth_token")] }
+    fun getAuthUsername() = context.dataStore.data.map { it[stringPreferencesKey("auth_username")] }
+    fun getAuthEmail() = context.dataStore.data.map { it[stringPreferencesKey("auth_email")] }
+
+
     fun getSettings()  = context.dataStore.data.map { preferences ->
         return@map Settings(
             preferences[intPreferencesKey("work_session")] ?: 25,
-            preferences[intPreferencesKey("short_break")] ?: 25,
-            preferences[intPreferencesKey("long_break")] ?: 25,
+            preferences[intPreferencesKey("short_break")] ?: 5,
+            preferences[intPreferencesKey("long_break")] ?: 15,
 //            preferences[booleanPreferencesKey("task_reminder")] ?: false,
 //            preferences[booleanPreferencesKey("timer_sound")] ?: false
 

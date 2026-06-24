@@ -46,7 +46,6 @@ interface TaskDao {
 
 
 
-    //region Category
     @Query("SELECT * FROM category")
     fun getAllCategories(): Flow<List<Category>>
 
@@ -57,5 +56,4 @@ interface TaskDao {
     suspend fun insertAllCategories(categories: List<Category>)
     @Delete
     suspend fun deleteCategory(category: Category)
-    //endregion
 }

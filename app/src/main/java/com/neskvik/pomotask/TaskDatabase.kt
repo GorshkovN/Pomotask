@@ -30,9 +30,10 @@ abstract class TaskDatabase: RoomDatabase() {
                 ).addCallback(object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        db.execSQL("INSERT INTO category (cid, name, color) VALUES (1, 'Задача', '#fc0303')")
-                        db.execSQL("INSERT INTO category (cid, name, color) VALUES (2, 'Работа', '#5c84fa')")
-                        db.execSQL("INSERT INTO category (cid, name, color) VALUES (3, 'Учёба', '#aff536')")
+                        db.execSQL("INSERT INTO category (cid, name, color) VALUES (1, 'Личное', '#E53935')")
+                        db.execSQL("INSERT INTO category (cid, name, color) VALUES (2, 'Работа', '#1976D2')")
+                        db.execSQL("INSERT INTO category (cid, name, color) VALUES (3, 'Хобби', '#F57C00')")
+                        db.execSQL("INSERT INTO category (cid, name, color) VALUES (4, 'Учёба', '#388E3C')")
                     }
                 })
                     .build().also {
